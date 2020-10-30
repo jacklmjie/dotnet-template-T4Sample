@@ -25,7 +25,7 @@ namespace T4Sample
                 Extension = ".cs"
             };
 
-            var connstr = "server=172.28.66.48;port=5306;database=yallaactivity;uid=yalla_d_dzs;pwd={-i(a1.1Qezs^tG;";
+            var connstr = "";
             using (IDbConnection conn = new MySqlConnection(connstr))
             {
                 conn.Open();
