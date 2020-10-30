@@ -1,0 +1,88 @@
+<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using SqlSugar;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace <#= NameSpace #>
+{
+    /// <summery>
+    /// <#= Table.Description #>
+    /// </summery>
+    [SugarTable("<#= Table.Name #>")]
+    public class <#= Table.Name.ToPascalCase() #>M
+    {
+<#
+        foreach (var x in Table.Columns)
+        {
+#>
+        /// <summery>
+        /// <#= x.Description #>
+        /// </summery>
+<#
+   if (x.IsPrimary && x.IsIdentity)
+   {
+#>
+        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
+<#
+    }
+#>
+<#
+ else if (x.IsPrimary)
+  {
+#>
+        [SugarColumn(IsPrimaryKey = true)]
+<#
+    }
+#>
+<#
+ else if (x.IsIdentity)
+  {
+#>
+        [SugarColumn(IsIdentity = true)]
+<#
+    }
+#>  
+        public <#= GetColumnType(x) #> <#= x.Name #> { get; <#= x.IsPrimary ? "" : "set; " #>}
+
+<#
+        }
+#>
+        /// <summery>
+        /// 
+        /// </summery>
+        public <#= Table.Name.ToPascalCase() #>M(
+            <#= string.Join(",\n            ", Table.Columns.Where(x => x.IsPrimary).Select(d => $"{GetColumnType(d)} {d.Name.ToCamelCase()}")) #>
+        )
+        {
+<#
+            foreach (var x in Table.Columns.Where(x => x.IsPrimary))
+            {
+#>
+            <#= x.Name.ToPascalCase() #> = <#= x.Name.ToCamelCase() #>;
+<#
+            }
+#>
+        }
+
+        /// <summery>
+        /// 
+        /// </summery>
+        public <#= Table.Name.ToPascalCase() #>M(
+            <#= string.Join(",\n            ", Table.Columns.Select(d => $"{GetColumnType(d)} {d.Name.ToCamelCase()}")) #>
+        )
+        {
+<#
+            foreach (var x in Table.Columns)
+            {
+#>
+            <#= x.Name.ToPascalCase() #> = <#= x.Name.ToCamelCase() #>;
+<#
+            }
+#>
+        }
+    }
+}
